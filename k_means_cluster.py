@@ -37,40 +37,29 @@ def Draw(pred, features, poi, mark_poi=False, name="image.png", f1_name="feature
     plt.show()
 
 
+def normalize_feature(feature_name, data_dict):
+    values = [data_dict[k][feature_name] for k in data_dict.keys()]
+    max_val = 0
+    for value in values:
+        if (type(value) == int and (value > max_val)):
+            max_val = value
+
+    for name in data_dict.keys():
+        if (type(data_dict[name][feature_name]) == int):
+            data_dict[name][feature_name] = data_dict[name][feature_name] / float(max_val)
 
 ### load in the dict of dicts containing all the data on each person in the dataset
 data_dict = pickle.load( open("final_project_dataset.pkl", "r") )
 ### there's an outlier--remove it! 
 data_dict.pop("TOTAL", 0)
-# keyss = data_dict.keys()
-#print data_dict[keyss[0]].keys()
-# for k in keyss:
-#     print data_dict[k]['exercised_stock_options']
-# print data_dict[keyss[1]]
-salary_values = [data_dict[k]['salary'] for k in data_dict.keys()]
-max_salary = 0
-for value in salary_values:
-    if (type(value) == int and (value > max_salary)):
-        max_salary = value
 
-for name in data_dict.keys():
-    if (type(data_dict[name]['salary']) == int):
-        data_dict[name]['salary'] = data_dict[name]['salary'] / float(max_salary)
-
-ex_stock_values = [data_dict[k]['exercised_stock_options'] for k in data_dict.keys()]
-max_ex_stock_value = 0
-for value in ex_stock_values:
-    if (type(value) == int and (value > max_ex_stock_value)):
-        max_ex_stock_value = value
-
-for name in data_dict.keys():
-    if (type(data_dict[name]['exercised_stock_options']) == int):
-        data_dict[name]['exercised_stock_options'] = data_dict[name]['exercised_stock_options'] / float(max_ex_stock_value)
 
 ### the input features we want to use 
 ### can be any key in the person-level dictionary (salary, director_fees, etc.) 
 feature_1 = "salary"
 feature_2 = "exercised_stock_options"
+normalize_feature(feature_1, data_dict)
+normalize_feature(feature_2, data_dict)
 #feature_3 = "total_payments"
 poi  = "poi"
 features_list = [poi, feature_1, feature_2]
