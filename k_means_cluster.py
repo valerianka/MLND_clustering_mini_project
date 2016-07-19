@@ -39,14 +39,17 @@ def Draw(pred, features, poi, mark_poi=False, name="image.png", f1_name="feature
 
 def normalize_feature(feature_name, data_dict):
     values = [data_dict[k][feature_name] for k in data_dict.keys()]
-    max_val = 0
+    max_val = -float("inf")
+    min_val = float("inf")
     for value in values:
         if (type(value) == int and (value > max_val)):
             max_val = value
-
+        if (type(value) == int and (value < min_val)):
+            min_val = value
+    #print min_val, max_val
     for name in data_dict.keys():
         if (type(data_dict[name][feature_name]) == int):
-            data_dict[name][feature_name] = data_dict[name][feature_name] / float(max_val)
+            data_dict[name][feature_name] = (data_dict[name][feature_name] - min_val) / float(max_val - min_val)
 
 ### load in the dict of dicts containing all the data on each person in the dataset
 data_dict = pickle.load( open("final_project_dataset.pkl", "r") )
